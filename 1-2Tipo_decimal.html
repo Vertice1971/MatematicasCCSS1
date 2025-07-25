@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificador de Fracciones - 1º Bachillerato</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .exercise-area {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .fraction {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 3px solid #e9ecef;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .options {
+            margin: 30px 0;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .option {
+            margin: 15px 0;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #6c757d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+
+        .option.selected {
+            background: #e3f2fd;
+            border-color: #2196F3;
+        }
+
+        .buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-check {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: linear-gradient(45deg, #FF5252, #FF7043);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .btn-next {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+            color: white;
+            display: none;
+        }
+
+        .btn-next:hover {
+            background: linear-gradient(45deg, #26D0CE, #2E8B57);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .result {
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            text-align: center;
+            font-weight: bold;
+            min-height: 50px;
+            display: none;
+        }
+
+        .correct {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+            border: 3px solid #2E7D32;
+        }
+
+        .incorrect {
+            background: linear-gradient(45deg, #f44336, #FF7043);
+            color: white;
+            border: 3px solid #C62828;
+        }
+
+        .explanation {
+            background: #fff3e0;
+            border: 2px solid #ffb74d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .explanation h3 {
+            color: #e65100;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .explanation p {
+            margin: 10px 0;
+            color: #5d4037;
+        }
+
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Clasificador de Fracciones</h1>
+            <p>Determina si la representación decimal es exacta, periódica pura o periódica mixta</p>
+            <p>Matemáticas 1º Bachillerato de Ciencias Sociales</p>
+            <p> tomcue@iesjuandelacierva.com</p>
+            <a href="https://www.amazon.es/dp/B0F61P4TXK" target="_blank">Puedes aprender a programarlo tú</a>
+        </div>
+
+        <div class="exercise-area">
+            <div class="fraction" id="fraction-display"></div>
+
+            <div class="options">
+                <label class="option" for="exacto">
+                    <input type="radio" id="exacto" name="tipo" value="exacto">
+                    <span>Decimal exacto</span>
+                </label>
+                <label class="option" for="puro">
+                    <input type="radio" id="puro" name="tipo" value="puro">
+                    <span>Periódico puro</span>
+                </label>
+                <label class="option" for="mixto">
+                    <input type="radio" id="mixto" name="tipo" value="mixto">
+                    <span>Periódico mixto</span>
+                </label>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-check" id="check-btn" onclick="checkAnswer()">🔍 Comprobar</button>
+                <button class="btn btn-next" id="next-btn" onclick="nextFraction()">➡️ Siguiente</button>
+            </div>
+
+            <div class="result" id="result"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentFraction = { numerator: 0, denominator: 0 };
+        let correctAnswer = '';
+
+        // Función para calcular el MCD usando el algoritmo de Euclides
+        function gcd(a, b) {
+            while (b !== 0) {
+                let temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        // Función para reducir una fracción a su forma irreducible
+        function reduceFraction(num, den) {
+            const divisor = gcd(num, den);
+            return { num: num / divisor, den: den / divisor };
+        }
+
+        // Función para generar una fracción irreducible aleatoria
+        function generateRandomFraction() {
+            let numerator, denominator;
+            do {
+                numerator = Math.floor(Math.random() * 50) + 1;
+                denominator = Math.floor(Math.random() * 50) + 1;
+            } while (gcd(numerator, denominator) !== 1); // Asegurar que sea irreducible
+
+            return { numerator, denominator };
+        }
+
+        // Función para factorizar un número
+        function factorize(n) {
+            const factors = {};
+            let d = 2;
+            while (d * d <= n) {
+                while (n % d === 0) {
+                    factors[d] = (factors[d] || 0) + 1;
+                    n /= d;
+                }
+                d++;
+            }
+            if (n > 1) {
+                factors[n] = (factors[n] || 0) + 1;
+            }
+            return factors;
+        }
+
+        // Función para determinar el tipo de decimal
+        function determineDecimalType(numerator, denominator) {
+            const factors = factorize(denominator);
+            const factorKeys = Object.keys(factors).map(Number);
+
+            // Verificar si solo tiene factores 2 y/o 5
+            const onlyTwoAndFive = factorKeys.every(factor => factor === 2 || factor === 5);
+
+            if (onlyTwoAndFive) {
+                return { type: 'exacto', factors: factors };
+            }
+
+            // Eliminar factores 2 y 5 del denominador
+            let reducedDen = denominator;
+            while (reducedDen % 2 === 0) reducedDen /= 2;
+            while (reducedDen % 5 === 0) reducedDen /= 5;
+
+            if (reducedDen === 1) {
+                return { type: 'exacto', factors: factors };
+            } else if (reducedDen === denominator) {
+                // No tiene factores 2 ni 5 -> periódico puro
+                const period = findPeriod(numerator, reducedDen);
+                return { type: 'puro', period: period, factors: factors };
+            } else {
+                // Tiene factores 2 y/o 5, pero también otros -> periódico mixto
+                const period = findPeriod(numerator, reducedDen);
+                const anteperiodLength = Math.max(
+                    factors[2] || 0,
+                    factors[5] || 0
+                );
+                return { 
+                    type: 'mixto', 
+                    period: period, 
+                    anteperiodLength: anteperiodLength,
+                    factors: factors 
+                };
+            }
+        }
+
+        // Función para encontrar el período de una fracción
+        function findPeriod(numerator, denominator) {
+            const remainders = new Map();
+            let remainder = numerator % denominator;
+            let position = 0;
+            let digits = '';
+
+            while (remainder !== 0 && !remainders.has(remainder)) {
+                remainders.set(remainder, position);
+                remainder *= 10;
+                const digit = Math.floor(remainder / denominator);
+                digits += digit;
+                remainder = remainder % denominator;
+                position++;
+            }
+
+            if (remainder === 0) {
+                return ''; // No hay período
+            } else {
+                const periodStart = remainders.get(remainder);
+                return digits.substring(periodStart);
+            }
+        }
+
+        // Función para calcular la expansión decimal con anteperíodo y período
+        function getDecimalExpansion(numerator, denominator) {
+            const factors = factorize(denominator);
+            let reducedDen = denominator;
+            
+            // Contar factores 2 y 5
+            const twos = factors[2] || 0;
+            const fives = factors[5] || 0;
+            const anteperiodLength = Math.max(twos, fives);
+            
+            // Eliminar factores 2 y 5
+            while (reducedDen % 2 === 0) reducedDen /= 2;
+            while (reducedDen % 5 === 0) reducedDen /= 5;
+            
+            if (reducedDen === 1) {
+                // Decimal exacto
+                return { anteperiod: '', period: '', isExact: true };
+            }
+            
+            // Calcular expansión decimal
+            let remainder = numerator;
+            let anteperiod = '';
+            let period = '';
+            
+            // Calcular anteperíodo
+            for (let i = 0; i < anteperiodLength; i++) {
+                remainder *= 10;
+                const digit = Math.floor(remainder / denominator);
+                anteperiod += digit;
+                remainder = remainder % denominator;
+            }
+            
+            // Calcular período
+            const remainders = new Map();
+            let position = 0;
+            
+            while (remainder !== 0 && !remainders.has(remainder)) {
+                remainders.set(remainder, position);
+                remainder *= 10;
+                const digit = Math.floor(remainder / denominator);
+                period += digit;
+                remainder = remainder % denominator;
+                position++;
+            }
+            
+            if (remainder !== 0) {
+                const periodStart = remainders.get(remainder);
+                period = period.substring(periodStart);
+            }
+            
+            return { anteperiod, period, isExact: false };
+        }
+
+        // Función para mostrar nueva fracción
+        function showNewFraction() {
+            currentFraction = generateRandomFraction();
+            document.getElementById('fraction-display').textContent = 
+                `${currentFraction.numerator}/${currentFraction.denominator}`;
+
+            const analysis = determineDecimalType(currentFraction.numerator, currentFraction.denominator);
+            correctAnswer = analysis.type;
+
+            // Limpiar selección y resultados
+            document.querySelectorAll('input[name="tipo"]').forEach(input => {
+                input.checked = false;
+                input.parentElement.classList.remove('selected');
+            });
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('check-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        // Función para verificar la respuesta
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="tipo"]:checked');
+            if (!selectedOption) {
+                alert('Por favor, selecciona una opción antes de comprobar.');
+                return;
+            }
+
+            const userAnswer = selectedOption.value;
+            const resultDiv = document.getElementById('result');
+            const explanationDiv = document.getElementById('explanation');
+
+            const analysis = determineDecimalType(currentFraction.numerator, currentFraction.denominator);
+            
+            // Mostrar resultado
+            resultDiv.style.display = 'block';
+            explanationDiv.style.display = 'block';
+
+            if (userAnswer === correctAnswer) {
+                resultDiv.className = 'result correct';
+                resultDiv.textContent = '✅ ¡Correcto! Muy bien.';
+            } else {
+                resultDiv.className = 'result incorrect';
+                resultDiv.textContent = '❌ Incorrecto. Inténtalo de nuevo.';
+            }
+
+            // Generar explicación
+            let explanation = `<h3>Explicación para ${currentFraction.numerator}/${currentFraction.denominator}:</h3>`;
+            
+            const factors = factorize(currentFraction.denominator);
+            const factorsList = Object.keys(factors).map(f => 
+                factors[f] > 1 ? `${f}${toSuperscript(factors[f])}` : f
+            ).join(' × ');
+            
+            explanation += `<p><strong>Factorización del denominador:</strong> ${currentFraction.denominator} = ${factorsList}</p>`;
+
+            if (analysis.type === 'exacto') {
+                explanation += `<p>El denominador solo contiene factores <span class="highlight">2 y/o 5</span>, por lo que la fracción genera un <strong>decimal exacto</strong>.</p>`;
+            } else if (analysis.type === 'puro') {
+                explanation += `<p>El denominador no contiene factores 2 ni 5, por lo que la fracción genera un <strong>decimal periódico puro</strong>.</p>`;
+                if (analysis.period) {
+                    explanation += `<p><strong>Período:</strong> <span class="highlight">${analysis.period}</span></p>`;
+                    explanation += `<p class="math">Decimal: 0,<span style="text-decoration: overline">${analysis.period}</span></p>`;
+                }
+            } else {
+                explanation += `<p>El denominador contiene factores 2 y/o 5 junto con otros factores, por lo que la fracción genera un <strong>decimal periódico mixto</strong>.</p>`;
+                
+                const expansion = getDecimalExpansion(currentFraction.numerator, currentFraction.denominator);
+                if (expansion.anteperiod && expansion.period) {
+                    explanation += `<p><strong>Anteperíodo:</strong> <span class="highlight">${expansion.anteperiod}</span></p>`;
+                    explanation += `<p><strong>Período:</strong> <span class="highlight">${expansion.period}</span></p>`;
+                    explanation += `<p class="math">Decimal: 0,${expansion.anteperiod}<span style="text-decoration: overline">${expansion.period}</span></p>`;
+                }
+            }
+
+            explanationDiv.innerHTML = explanation;
+
+            // Cambiar botones
+            document.getElementById('check-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        // Función para convertir números a superíndices Unicode
+        function toSuperscript(num) {
+            const superscripts = {
+                '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+            };
+            return num.toString().split('').map(digit => superscripts[digit]).join('');
+        }
+
+        // Función para ir a la siguiente fracción
+        function nextFraction() {
+            showNewFraction();
+        }
+
+        // Event listeners para las opciones
+        document.querySelectorAll('input[name="tipo"]').forEach(input => {
+            input.addEventListener('change', function() {
+                document.querySelectorAll('.option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                this.parentElement.classList.add('selected');
+            });
+        });
+
+        // Inicializar con una fracción aleatoria
+        showNewFraction();
+    </script>
+</body>
+</html>

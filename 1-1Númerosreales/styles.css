@@ -1,0 +1,292 @@
+/* styles.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.scene {
+  padding: 40px;
+}
+
+.scene h2 {
+  color: #4f46e5;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  border-bottom: 3px solid #e5e7eb;
+  padding-bottom: 15px;
+}
+
+.numero-tipo {
+  background: #f8fafc;
+  border-left: 5px solid #4f46e5;
+  margin: 30px 0;
+  padding: 25px;
+  border-radius: 0 15px 15px 0;
+}
+
+.numero-tipo h3 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.symbol {
+  background: #4f46e5;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.descripcion {
+  color: #475569;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.ejemplos {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+}
+
+.ejemplos h4 {
+  color: #059669;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.ejemplos p {
+  color: #374151;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.cotidiano {
+  background: #ecfdf5;
+  border: 2px solid #10b981;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.cotidiano h5 {
+  color: #065f46;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.cotidiano p {
+  color: #047857;
+  font-size: 0.95rem;
+}
+
+.fraccion-info {
+  background: #fef3c7;
+  border: 2px solid #f59e0b;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.fraccion-info h4 {
+  color: #92400e;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.fraccion-ejemplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.fraccion-tipo {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #f59e0b;
+}
+
+.fraccion-tipo h5 {
+  color: #92400e;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.scene { display: none; }
+.scene.active { display: block; }
+
+.navigation {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.nav-button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+#zonasNumericas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  margin: 0 auto;
+  background-color: #cbd5e1; /* fondo ℝ */
+  border-radius: 30px;
+  padding: 20px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* Zona irracional = ℝ \ ℚ */
+.zona-irracional {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  background: none;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+
+/* ℚ */
+.zona-racional {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  background-color: #a7f3d0;
+  border-radius: 25px;
+  padding: 10px;
+}
+
+/* ℤ */
+.zona-entero {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  background-color: #fdba74;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+/* ℕ */
+.zona-natural {
+  position: absolute;
+  top: 30%;
+  left: 35%;
+  width: 30%;
+  height: 40%;
+  background-color: #fde047;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+/* Fichas de números */
+.ficha {
+  display: inline-block;
+  background-color: white;
+  border: 2px solid #1e3a8a;
+  color: #1e3a8a;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: 5px;
+  font-size: 1.1rem;
+}
+
+.zona-racional,
+.zona-entero,
+.zona-natural {
+  pointer-events: auto;
+}
+
+#zonasNumericas {
+  position: relative;
+  width: 100%;
+  height: 400px;       /* fija altura para que las zonas tengan área */
+  margin: 0 auto;
+  background-color: #cbd5e1;
+  border-radius: 30px;
+  padding: 20px;
+}
+
+.ficha {
+  cursor: grab;
+}
+.ficha:active {
+  cursor: grabbing;
+}
+
+.zona-irracional {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 30px;
+  background: none;
+  pointer-events: auto;
+  z-index: 0;
+}
+
+.zona-racional {
+  z-index: 1;
+}
+
+.zona-entero {
+  z-index: 2;
+}
+
+.zona-natural {
+  z-index: 3;
+}

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fracciones en la Recta con Teorema de Tales</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            flex-wrap: wrap;
+        }
+
+        .fraction-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5em;
+        }
+
+        .fraction-input input {
+            width: 60px;
+            padding: 8px;
+            font-size: 1.2em;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .fraction-input input:focus {
+            border-color: #6c5ce7;
+            outline: none;
+            box-shadow: 0 0 5px rgba(108, 92, 231, 0.3);
+        }
+
+        .fraction-bar {
+            font-size: 2em;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 5px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #5a4fcf, #8b82f7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #00cec9, #55efc4);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #00a085, #2dd4bf);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .canvas-container {
+            margin: 30px 0;
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: #fafafa;
+            cursor: crosshair;
+        }
+
+        .explanation {
+            background: #e8f4f8;
+            border: 2px solid #74b9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .explanation h3 {
+            color: #0984e3;
+            margin-top: 0;
+            font-size: 1.4em;
+        }
+
+        .explanation p {
+            margin: 10px 0;
+            line-height: 1.6;
+            color: #2d3436;
+        }
+
+        .step {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #6c5ce7;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #6c5ce7;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .controls-info {
+            background: #f1c40f;
+            color: #8b4513;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .preset-fractions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            background: #ddd;
+            border: 2px solid #bbb;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            background: #6c5ce7;
+            color: white;
+            border-color: #5a4fcf;
+        }
+
+        .error-message {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📐 Fracciones en la Recta Real</h1>
+            <p>Usando el Teorema de Tales para localizar fracciones</p>
+            <p>1º Bachillerato de Ciencias Sociales</p>
+            <p> tomcue@iesjuandelacierva.com</p>
+            <p>1º Bachillerato de Ciencias Sociales</p>
+            <p><a href="https://www.amazon.es/dp/B0F61P4TXK" target="_blank">Puedes aprender a programarlo tú</a></p>
+
+        </div>
+
+        <div class="controls">
+            <div class="fraction-input">
+                <input type="number" id="numerator" value="3" min="1" max="20">
+                <span class="fraction-bar">/</span>
+                <input type="number" id="denominator" value="4" min="1" max="20">
+            </div>
+            <button class="btn btn-primary" onclick="drawConstruction()">🎯 Localizar Fracción</button>
+            <button class="btn btn-secondary" onclick="clearCanvas()">🧹 Limpiar</button>
+        </div>
+
+        <div class="preset-fractions">
+            <span>Ejemplos rápidos: </span>
+            <button class="preset-btn" onclick="setFraction(1,2)">1/2</button>
+            <button class="preset-btn" onclick="setFraction(2,3)">2/3</button>
+            <button class="preset-btn" onclick="setFraction(3,4)">3/4</button>
+            <button class="preset-btn" onclick="setFraction(5,6)">5/6</button>
+            <button class="preset-btn" onclick="setFraction(7,8)">7/8</button>
+            <button class="preset-btn" onclick="setFraction(4,5)">4/5</button>
+            <button class="preset-btn" onclick="setFraction(3,5)">3/5</button>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+
+        <div class="canvas-container">
+            <canvas id="canvas" width="900" height="400"></canvas>
+        </div>
+
+        <div class="controls-info">
+            💡 El teorema de Tales nos permite dividir cualquier segmento en partes proporcionales usando rectas paralelas
+        </div>
+
+        <div class="explanation" id="explanation">
+            <h3>🔍 Construcción paso a paso:</h3>
+            <div id="steps"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let animationStep = 0;
+        let animationId = null;
+
+        function setFraction(num, den) {
+            document.getElementById('numerator').value = num;
+            document.getElementById('denominator').value = den;
+            drawConstruction();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('explanation').style.display = 'none';
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            animationStep = 0;
+        }
+
+        function drawConstruction() {
+            const numerator = parseInt(document.getElementById('numerator').value);
+            const denominator = parseInt(document.getElementById('denominator').value);
+
+            if (!numerator || !denominator || numerator <= 0 || denominator <= 0) {
+                showError('Por favor, introduce números válidos mayores que 0');
+                return;
+            }
+
+            if (denominator > 20 || numerator > 20) {
+                showError('Los números deben ser menores o iguales a 20 para mejor visualización');
+                return;
+            }
+
+            clearCanvas();
+            animationStep = 0;
+            animate(numerator, denominator);
+            showExplanation(numerator, denominator);
+        }
+
+        function animate(numerator, denominator) {
+            const steps = [
+                () => drawBackground(),
+                () => drawMainLine(),
+                () => drawAuxiliaryLine(),
+                () => drawDivisions(denominator),
+                () => drawParallelLines(denominator),
+                () => markFraction(numerator, denominator),
+                () => highlightResult(numerator, denominator)
+            ];
+
+            if (animationStep < steps.length) {
+                steps[animationStep]();
+                animationStep++;
+                animationId = setTimeout(() => animate(numerator, denominator), 800);
+            }
+        }
+
+        function drawBackground() {
+            // Fondo y título
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.font = 'bold 18px Arial';
+            ctx.fillStyle = '#2d3436';
+            ctx.textAlign = 'center';
+            ctx.fillText('Construcción con Teorema de Tales', canvas.width/2, 30);
+        }
+
+        function drawMainLine() {
+            // Recta principal (horizontal)
+            ctx.strokeStyle = '#2d3436';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(750, 200);
+            ctx.stroke();
+
+            // Marcar 0 y 1
+            ctx.fillStyle = '#2d3436';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            
+            // Punto 0
+            ctx.fillRect(48, 198, 4, 4);
+            ctx.fillText('0', 50, 220);
+            
+            // Punto 1 (unidad)
+            ctx.fillRect(498, 198, 4, 4);
+            ctx.fillText('1', 500, 220);
+            
+            // Flecha derecha
+            ctx.beginPath();
+            ctx.moveTo(740, 195);
+            ctx.lineTo(750, 200);
+            ctx.lineTo(740, 205);
+            ctx.stroke();
+        }
+
+        function drawAuxiliaryLine() {
+            // Recta auxiliar (diagonal)
+            ctx.strokeStyle = '#6c5ce7';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(350, 100);
+            ctx.stroke();
+
+            ctx.fillStyle = '#6c5ce7';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Recta auxiliar', 360, 105);
+        }
+
+        function drawDivisions(denominator) {
+            // Dividir la recta auxiliar en 'denominator' partes iguales
+            ctx.strokeStyle = '#e17055';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#e17055';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+
+            const startX = 50, startY = 200;
+            const endX = 350, endY = 100;
+            
+            for (let i = 0; i <= denominator; i++) {
+                const t = i / denominator;
+                const x = startX + t * (endX - startX);
+                const y = startY + t * (endY - startY);
+                
+                // Punto de división
+                ctx.fillRect(x-2, y-2, 4, 4);
+                
+                // Numeración
+                if (i > 0) {
+                    ctx.fillText(i.toString(), x-10, y-8);
+                }
+            }
+
+            ctx.fillStyle = '#2d3436';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`División en ${denominator} partes iguales`, 370, 130);
+        }
+
+        function drawParallelLines(denominator) {
+            // Líneas paralelas desde las divisiones hasta la recta principal
+            ctx.strokeStyle = '#00b894';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+
+            const startX = 50, startY = 200;
+            const endX = 350, endY = 100;
+            
+            for (let i = 1; i <= denominator; i++) {
+                const t = i / denominator;
+                const auxX = startX + t * (endX - startX);
+                const auxY = startY + t * (endY - startY);
+                
+                // Calcular punto en la recta principal usando proporcionalidad
+                const mainX = 50 + t * 450; // 450 = longitud del segmento unitario
+                
+                ctx.beginPath();
+                ctx.moveTo(auxX, auxY);
+                ctx.lineTo(mainX, 200);
+                ctx.stroke();
+            }
+
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#2d3436';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Paralelas por el teorema de Tales', 370, 160);
+        }
+
+        function markFraction(numerator, denominator) {
+            // Marcar la fracción específica
+            const t = numerator / denominator;
+            const fractionX = 50 + t * 450;
+            
+            // Círculo destacado
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(fractionX, 200, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Línea vertical
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(fractionX, 150);
+            ctx.lineTo(fractionX, 250);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Etiqueta de la fracción
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${numerator}/${denominator}`, fractionX, 140);
+            
+            // Valor decimal
+            const decimal = (numerator / denominator).toFixed(3);
+            ctx.font = '14px Arial';
+            ctx.fillText(`≈ ${decimal}`, fractionX, 270);
+        }
+
+        function highlightResult(numerator, denominator) {
+            // Destacar el resultado final
+            const t = numerator / denominator;
+            const fractionX = 50 + t * 450;
+            
+            // Animación de destello
+            ctx.strokeStyle = '#ffeaa7';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(fractionX, 200, 15, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            setTimeout(() => {
+                ctx.strokeStyle = '#fdcb6e';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.arc(fractionX, 200, 20, 0, 2 * Math.PI);
+                ctx.stroke();
+            }, 200);
+        }
+
+        function showExplanation(numerator, denominator) {
+            const explanationDiv = document.getElementById('explanation');
+            const stepsDiv = document.getElementById('steps');
+            
+            const decimal = (numerator / denominator).toFixed(4);
+            const percentage = (numerator / denominator * 100).toFixed(1);
+            
+            stepsDiv.innerHTML = `
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Dibujar la recta principal:</strong> Esta será nuestra recta numérica donde queremos localizar ${numerator}/${denominator}.
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Trazar una recta auxiliar:</strong> Desde el punto 0, dibujamos una recta en cualquier dirección (aquí elegimos diagonal).
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Dividir en ${denominator} partes iguales:</strong> En la recta auxiliar, marcamos ${denominator} segmentos iguales usando compás.
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Aplicar el teorema de Tales:</strong> Trazamos paralelas desde cada división hasta la recta principal.
+                </div>
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong>Localizar ${numerator}/${denominator}:</strong> El punto ${numerator} de la recta auxiliar determina nuestra fracción en la recta principal.
+                </div>
+                <div class="step">
+                    <span class="step-number">6</span>
+                    <strong>Resultado:</strong> ${numerator}/${denominator} = ${decimal} = ${percentage}% de la unidad.
+                </div>
+            `;
+            
+            explanationDiv.style.display = 'block';
+        }
+
+        // Inicializar con 3/4
+        window.onload = () => {
+            drawConstruction();
+        };
+    </script>
+</body>
+</html>
