@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Construir √n: Catetos enteros e irracionales (Pitágoras)</title>
+<style>
+  :root{
+    --primary:#1d4ed8; --secondary:#059669; --accent:#dc2626; --warning:#d97706;
+    --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --border:#e5e7eb; --success:#10b981; --purple:#7c3aed;
+  }
+  *{box-sizing:border-box}
+  body{font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; background:var(--bg); color:var(--text); line-height:1.6}
+  .container{max-width:1300px; margin:0 auto; padding:20px}
+  .header{text-align:center; margin-bottom:24px}
+  .header h1{color:var(--primary); font-size:2rem; margin:0}
+  .header p{color:var(--muted); margin:6px 0 0}
+  .card{background:var(--card); border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.08); padding:20px; margin:18px 0}
+  .problem-section{background:linear-gradient(135deg,#fef3c7,#fed7aa); border:2px solid var(--warning)}
+  .problem-section h2{color:#92400e; margin:0 0 10px; text-align:center}
+  .target-formula{background:#92400e; color:#fff; padding:14px; border-radius:10px; text-align:center; font-weight:700}
+  .solution-box{background:#ecfdf5; border:2px solid var(--success)}
+  .decomposition{background:#eff6ff; border:1px solid #3b82f6; border-radius:10px; padding:16px}
+  .controls{display:flex; flex-wrap:wrap; gap:14px; align-items:end; padding:16px; background:#f1f5f9; border-radius:10px}
+  .control-group{display:flex; flex-direction:column; gap:6px}
+  .control-group label{font-weight:600; font-size:14px}
+  .control-group input,.control-group select{padding:10px; border:2px solid var(--border); border-radius:8px; font-weight:600; text-align:center}
+  .btn{padding:10px 16px; border:none; border-radius:8px; font-weight:700; cursor:pointer}
+  .btn-primary{background:var(--primary); color:#fff}
+  .btn-primary:hover{background:#1e40af}
+  .btn-secondary{background:var(--secondary); color:#fff}
+  .btn-secondary:hover{background:#047857}
+  .btn-clear{background:#6b7280; color:#fff}
+  .btn-clear:hover{background:#4b5563}
+  .examples-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:10px; margin-top:12px}
+  .example-btn{padding:10px 12px; border:2px solid var(--border); background:#fff; border-radius:8px; cursor:pointer; font-weight:700}
+  .example-btn:hover{border-color:var(--primary)}
+  .main-content{display:grid; grid-template-columns:2fr 1fr; gap:22px; margin:20px 0}
+  @media(max-width:1000px){.main-content{grid-template-columns:1fr}}
+  .canvas-container{background:#fff; border:2px solid var(--border); border-radius:12px; padding:12px}
+  canvas{width:100%; height:560px; border:1px solid #e5e7eb; border-radius:8px; background:#fff}
+  .explanation{background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:16px}
+  .step{background:#fff; border-left:5px solid var(--primary); padding:12px; margin:10px 0; border-radius:0 8px 8px 0; box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .step.active{border-left-color:var(--accent); background:#fef2f2}
+  .step.completed{border-left-color:var(--success); background:#f0fdf4}
+  .factorization{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; margin-top:12px}
+  .factor-option{background:#fff; border:2px solid #d1d5db; border-radius:10px; padding:12px; text-align:center; cursor:pointer; outline:none}
+  .factor-option:hover{border-color:var(--primary)}
+  .factor-option.selected{border-color:var(--success); background:#f0fdf4; box-shadow:0 0 0 3px rgba(16,185,129,.25), 0 8px 30px rgba(16,185,129,.35)}
+  .factor-option.irrational{border-color:#e9d5ff; background:#faf5ff}
+  .factor-option h4{margin:4px 0 6px; color:var(--primary)}
+  .factor-option.irrational h4{color:var(--purple)}
+  .factor-option p{margin:4px 0; color:var(--muted); font-size:14px}
+  .type{font-size:12px; font-weight:700; padding:3px 8px; border-radius:999px; display:inline-block; margin-top:6px}
+  .type.integer{background:#dbeafe; color:#1e40af}
+  .type.mixed{background:#f3e8ff; color:#7c3aed}
+  .warning{background:#fef2f2; border:1px solid var(--accent); border-radius:8px; padding:12px; color:#991b1b}
+  .info{background:#eff6ff; border:1px solid #3b82f6; border-radius:8px; padding:12px; color:#1e40af}
+
+  @keyframes glow {
+    0% { box-shadow:0 0 0 0 rgba(16,185,129,.6), 0 8px 30px rgba(16,185,129,.4) }
+    60% { box-shadow:0 0 0 10px rgba(16,185,129,0), 0 8px 30px rgba(16,185,129,.25) }
+    100% { box-shadow:0 0 0 0 rgba(16,185,129,0), 0 8px 30px rgba(16,185,129,.15) }
+  }
+  .pulse{animation:glow 1.2s ease-out}
+</style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <h1>Construir √n en la recta</h1>
+        <div class="subtitle">Visualiza y construye números irracionales usando el teorema de Pitágoras</div>
+        <div class="info-block">
+            <p>Matemáticas 1º Bachillerato de Ciencias Sociales</p>
+            <p>tomcue@iesjuandelacierva.com</p>
+            <a href="https://www.amazon.es/dp/B0F61P4TXK" target="_blank">Puedes aprender a programarlo tú</a>
+        </div>
+    </header>
+
+  <div class="card problem-section">
+    <h2>Planteamiento</h2>
+    <div class="target-formula" id="targetFormula">Objetivo: construir √11</div>
+    <p style="text-align:center;margin:8px 0 0">Buscar a, b con a² + b² = n. La hipotenusa es √n.</p>
+  </div>
+
+  <div class="card solution-box">
+    <h3>Estrategia</h3>
+    <p>El número interior de la raíz puede expresarse como la suma de dos números. Entonces los catetos serán las raíces cuadradas de esos números y la hipotenusa la raíz cuadrada de esa suma, el número que quieres representar.</p>
+    <div class="decomposition" id="decompositionBox">
+      <h4>Descomposición para n = <span id="currentN">11</span></h4>
+      <p>Se listan pares (u, v) con u + v = <span id="targetN">11</span>.</p>
+      <div id="factorizations"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="controls">
+      <div class="control-group">
+        <label for="nValue">Número (n):</label>
+        <input id="nValue" type="number" min="2" max="200" value="11"/>
+      </div>
+      <button class="btn btn-secondary" id="constructBtn">Construir triángulo</button>
+      <button class="btn btn-clear" id="clearBtn">Limpiar</button>
+    </div>
+
+    <div class="examples-grid">
+      <button class="example-btn" data-n="2">√2</button>
+      <button class="example-btn" data-n="5">√5</button>
+      <button class="example-btn" data-n="8">√8</button>
+      <button class="example-btn" data-n="11">√11</button>
+      <button class="example-btn" data-n="13">√13</button>
+      <button class="example-btn" data-n="17">√17</button>
+      <button class="example-btn" data-n="20">√20</button>
+      <button class="example-btn" data-n="26">√26</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="canvas-container">
+      <canvas id="canvas" width="1000" height="560"></canvas>
+    </div>
+    <div class="explanation">
+      <h3>Proceso</h3>
+      <div id="steps">
+        <div class="info">
+          <strong>Recta fija al 133% de √n</strong>
+          <p>La recta se ajusta automáticamente a 1.33·√n. Ejemplo: √13 ≈ 3.606 → la recta llega a ≈ 4.794 (&lt; 6).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Canvas y estado
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let currentN = 11;
+let selectedDecomposition = null;
+
+// Config base
+const config = {
+  originX: 80,
+  originY: 420,
+  scale: 35,
+  maxUnits: 12
+};
+
+function toPixelX(x){ return config.originX + x * config.scale; }
+function toPixelY(y){ return config.originY - y * config.scale; }
+
+// Ajuste fijo: recta = 1.33 * √n
+function adjustScaleAndRange(n){
+  const factor = 1.33;
+  const target = Math.sqrt(n);
+  const desired = target * factor;
+  const maxUnits = Math.max( Math.ceil(desired*10)/10, target );
+  const leftMargin = config.originX;
+  const rightMargin = 20;
+  const availablePx = canvas.width - leftMargin - rightMargin;
+  const MIN_SCALE = 28;
+  const MAX_SCALE = 80;
+
+  let scale = Math.floor(availablePx / maxUnits);
+  if (scale > MAX_SCALE){
+    scale = MAX_SCALE;
+  } else if (scale < MIN_SCALE){
+    scale = MIN_SCALE;
+  }
+
+  config.scale = scale;
+  config.maxUnits = maxUnits;
+}
+
+// Utilidades
+function isPerfectSquare(n){
+  const r = Math.sqrt(n);
+  return Number.isInteger(r);
+}
+
+// Descomposiciones (u+v=n) → catetos √u, √v
+function findAllDecompositions(n){
+  const decomps = [];
+
+  // Enteros exactos
+  for (let a = 0; a <= Math.floor(Math.sqrt(n)); a++){
+    const b2 = n - a*a;
+    const b = Math.sqrt(b2);
+    if (Number.isInteger(b) && a <= b){
+      decomps.push({
+        a:a, b:b, aSquared:a*a, bSquared:b*b,
+        aDisplay:String(a), bDisplay:String(b), type:'integer'
+      });
+    }
+  }
+
+  // Mixtas √k y entero
+  for (let k = 2; k < n; k++){
+    if (isPerfectSquare(k)) continue;
+    const m2 = n - k;
+    if (m2 <= 0) continue;
+    const m = Math.sqrt(m2);
+    if (Number.isInteger(m)){
+      decomps.push({
+        a:Math.sqrt(k), b:m, aSquared:k, bSquared:m2,
+        aDisplay:`√${k}`, bDisplay:String(m), type:'mixed'
+      });
+      decomps.push({
+        a:m, b:Math.sqrt(k), aSquared:m2, bSquared:k,
+        aDisplay:String(m), bDisplay:`√${k}`, type:'mixed'
+      });
+    }
+  }
+
+  // Dos raíces √k y √l
+  for (let k = 2; k <= Math.floor(n/2); k++){
+    if (isPerfectSquare(k)) continue;
+    const l = n - k;
+    if (l <= 0 || isPerfectSquare(l)) continue;
+    decomps.push({
+      a:Math.sqrt(k), b:Math.sqrt(l),
+      aSquared:k, bSquared:l,
+      aDisplay:`√${k}`, bDisplay:`√${l}`, type:'irrational'
+    });
+  }
+
+  // Dedupe por (min,max) de cuadrados
+  const seen = new Set();
+  const unique = [];
+  for (const d of decomps){
+    const x = Math.min(d.aSquared, d.bSquared);
+    const y = Math.max(d.aSquared, d.bSquared);
+    const key = `${x},${y}`;
+    if (!seen.has(key)){ seen.add(key); unique.push(d); }
+  }
+
+  // Orden preferente
+  unique.sort((p,q)=>{
+    const rank = t => t==='integer'?0:(t==='mixed'?1:2);
+    if (rank(p.type)!==rank(q.type)) return rank(p.type)-rank(q.type);
+    const score = d => (Number.isInteger(d.a)?0:1)+(Number.isInteger(d.b)?0:1);
+    const s = score(p)-score(q);
+    if (s!==0) return s;
+    return (p.aSquared+p.bSquared)-(q.aSquared+q.bSquared);
+  });
+  return unique;
+}
+
+// UI descomposiciones
+function updateDecompositions(n){
+  currentN = n;
+  document.getElementById('targetFormula').textContent = `Objetivo: construir √${n}`;
+  document.getElementById('currentN').textContent = n;
+  document.getElementById('targetN').textContent = n;
+
+  adjustScaleAndRange(n);
+  clearCanvas();
+
+  const decomps = findAllDecompositions(n);
+  const container = document.getElementById('factorizations');
+
+  if (!decomps.length){
+    container.innerHTML = `
+      <div class="warning">
+        <strong>No hay descomposición encontrada.</strong>
+        <div>Prueba con otro n.</div>
+      </div>`;
+    selectedDecomposition = null;
+    return;
+  }
+
+  let html = '<div class="factorization">';
+  decomps.forEach((d,i)=>{
+    const typeClass = d.type==='integer' ? '' : 'irrational';
+    const chipText = d.type==='integer' ? 'Solo enteros' : (d.type==='mixed' ? 'Entero + raíz' : 'Dos raíces');
+    const typeLabel = d.type==='integer' ? 'integer' : 'mixed';
+    html += `
+      <div class="factor-option ${typeClass}" data-index="${i}" tabindex="0" role="button" aria-pressed="false" aria-selected="false">
+        <h4>${d.aDisplay}² + ${d.bDisplay}² = ${n}</h4>
+        <p>${d.aSquared} + ${d.bSquared} = ${n}</p>
+        <p>Catetos: ${d.aDisplay} y ${d.bDisplay}</p>
+        <span class="type ${typeLabel}">${chipText}</span>
+      </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+
+  const cards = Array.from(document.querySelectorAll('.factor-option'));
+  const selectCard = (el, idx)=>{
+    cards.forEach(x=>{
+      x.classList.remove('selected','pulse');
+      x.setAttribute('aria-selected','false');
+      x.setAttribute('aria-pressed','false');
+    });
+    el.classList.add('selected','pulse');
+    el.setAttribute('aria-selected','true');
+    el.setAttribute('aria-pressed','true');
+    // reinicio de animación
+    void el.offsetWidth;
+    el.classList.add('pulse');
+    setTimeout(()=>el.classList.remove('pulse'),1200);
+
+    selectedDecomposition = decomps[idx];
+    updateStepsExplanation();
+    el.scrollIntoView({block:'nearest', inline:'nearest', behavior:'smooth'});
+  };
+
+  cards.forEach((el,i)=>{
+    el.addEventListener('click', ()=>selectCard(el,i));
+    el.addEventListener('keydown', (ev)=>{
+      if (ev.key==='Enter' || ev.key===' ') { ev.preventDefault(); selectCard(el,i); }
+    });
+  });
+
+  selectedDecomposition = decomps[0];
+  const first = document.querySelector('.factor-option');
+  if (first){
+    first.classList.add('selected','pulse');
+    first.setAttribute('aria-selected','true');
+    first.setAttribute('aria-pressed','true');
+    setTimeout(()=>first.classList.remove('pulse'),1200);
+  }
+  updateStepsExplanation();
+}
+
+// Pasos
+function updateStepsExplanation(){
+  if (!selectedDecomposition) return;
+  const {aDisplay,bDisplay,aSquared,bSquared}=selectedDecomposition;
+  const steps = `
+    <div class="step completed"><strong>Paso 1:</strong> Objetivo √${currentN}</div>
+    <div class="step completed"><strong>Paso 2:</strong> ${currentN} = ${aDisplay}² + ${bDisplay}² = ${aSquared} + ${bSquared}</div>
+    <div class="step active"><strong>Paso 3:</strong> Triángulo con catetos ${aDisplay} y ${bDisplay}</div>
+    <div class="step"><strong>Paso 4:</strong> Hipotenusa = √(${aDisplay}² + ${bDisplay}²) = √${currentN}</div>
+    <div class="step"><strong>Paso 5:</strong> Traslado con compás a la recta numérica</div>`;
+  document.getElementById('steps').innerHTML = steps;
+}
+
+// Dibujo ejes
+function clearCanvas(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawAxes();
+}
+
+function drawAxes(){
+  ctx.strokeStyle = '#374151';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(config.originX-20, config.originY);
+  ctx.lineTo(toPixelX(config.maxUnits), config.originY);
+  ctx.stroke();
+
+  ctx.fillStyle = '#374151';
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'center';
+  const I = Math.floor(config.maxUnits);
+  for (let i=0;i<=I;i++){
+    const x = toPixelX(i);
+    ctx.beginPath();
+    ctx.moveTo(x, config.originY-5);
+    ctx.lineTo(x, config.originY+5);
+    ctx.stroke();
+    ctx.fillText(String(i), x, config.originY+18);
+  }
+  if (config.maxUnits - I > 1e-6){
+    const x = toPixelX(config.maxUnits);
+    ctx.beginPath();
+    ctx.moveTo(x, config.originY-4);
+    ctx.lineTo(x, config.originY+4);
+    ctx.stroke();
+    ctx.fillText(config.maxUnits.toFixed(1), x, config.originY+18);
+  }
+}
+
+// Construcción principal
+function constructTriangle(){
+  if (!selectedDecomposition){ alert('Selecciona una descomposición'); return; }
+
+  adjustScaleAndRange(currentN);
+  clearCanvas();
+
+  const {a,b,aDisplay,bDisplay} = selectedDecomposition;
+
+  const colors = { horizontal:'#1d4ed8', vertical:'#dc2626', hyp:'#059669' };
+
+  // Cateto horizontal
+  ctx.strokeStyle = colors.horizontal;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(toPixelX(0), config.originY);
+  ctx.lineTo(toPixelX(a), config.originY);
+  ctx.stroke();
+  ctx.fillStyle = colors.horizontal;
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(`a = ${aDisplay}`, toPixelX(a/2), config.originY+24);
+
+  // Cateto vertical
+  ctx.strokeStyle = colors.vertical;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(toPixelX(a), config.originY);
+  ctx.lineTo(toPixelX(a), toPixelY(b));
+  ctx.stroke();
+  ctx.save();
+  ctx.fillStyle = colors.vertical;
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.translate(toPixelX(a)+24, toPixelY(b/2));
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText(`b = ${bDisplay}`, 0, 0);
+  ctx.restore();
+
+  // Ángulo recto
+  const cs = 12;
+  ctx.strokeStyle = '#6b7280';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(toPixelX(a)-cs, config.originY);
+  ctx.lineTo(toPixelX(a)-cs, config.originY-cs);
+  ctx.lineTo(toPixelX(a),   config.originY-cs);
+  ctx.stroke();
+
+  // Hipotenusa
+  ctx.strokeStyle = colors.hyp;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(toPixelX(0), config.originY);
+  ctx.lineTo(toPixelX(a), toPixelY(b));
+  ctx.stroke();
+
+  // Etiqueta hipotenusa
+  const midX = toPixelX(a/2)-24;
+  const midY = toPixelY(b/2)-12;
+  ctx.fillStyle = colors.hyp;
+  ctx.font = 'bold 16px Arial';
+  ctx.fillText(`√(${aDisplay}² + ${bDisplay}²) = √${currentN}`, midX, midY);
+
+  // Arco y punto √n
+  const radius = Math.sqrt(a*a + b*b); // √n
+  ctx.strokeStyle = '#7c3aed';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([8,8]);
+  ctx.beginPath();
+  ctx.arc(toPixelX(0), config.originY, radius*config.scale, -0.25, 0.25);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#dc2626';
+  ctx.beginPath();
+  ctx.arc(toPixelX(radius), config.originY, 6, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle = '#dc2626';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(toPixelX(radius), config.originY-60);
+  ctx.lineTo(toPixelX(radius), config.originY+36);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#dc2626';
+  ctx.font = 'bold 18px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(`√${currentN} ≈ ${radius.toFixed(3)}`, toPixelX(radius), config.originY-70);
+
+  updateStepsAfterConstruction();
+}
+
+function updateStepsAfterConstruction(){
+  const {aDisplay,bDisplay}=selectedDecomposition;
+  const steps = `
+    <div class="step completed"><strong>Paso 1:</strong> √${currentN} definido</div>
+    <div class="step completed"><strong>Paso 2:</strong> Descomposición seleccionada</div>
+    <div class="step completed"><strong>Paso 3:</strong> Triángulo con catetos ${aDisplay} y ${bDisplay}</div>
+    <div class="step completed"><strong>Paso 4:</strong> Hipotenusa = √${currentN}</div>
+    <div class="step active"><strong>Paso 5:</strong> √${currentN} ubicado en la recta </div>`;
+  document.getElementById('steps').innerHTML = steps;
+}
+
+// Eventos
+document.getElementById('constructBtn').addEventListener('click', constructTriangle);
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  clearCanvas();
+  document.getElementById('steps').innerHTML =
+    '<div class="info"><strong>Canvas limpio</strong><p>Analiza un número y construye su representación.</p></div>';
+});
+
+document.getElementById('nValue').addEventListener('change', ()=>{
+  const n = parseInt(document.getElementById('nValue').value,10);
+  updateDecompositions(n);
+});
+
+document.querySelectorAll('.example-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const n = parseInt(btn.dataset.n,10);
+    document.getElementById('nValue').value = n;
+    updateDecompositions(n);
+    if (n===11){
+      const decomps = findAllDecompositions(11);
+      const idx = decomps.findIndex(d => (d.aSquared===2 && d.bSquared===9) || (d.aSquared===9 && d.bSquared===2));
+      if (idx>=0){
+        selectedDecomposition = decomps[idx];
+        const cards = document.querySelectorAll('.factor-option');
+        cards.forEach(c=>c.classList.remove('selected','pulse'));
+        if (cards[idx]){
+          cards[idx].classList.add('selected','pulse');
+          setTimeout(()=>cards[idx].classList.remove('pulse'),1200);
+        }
+        updateStepsExplanation();
+      }
+    }
+  });
+});
+
+// Inicio
+adjustScaleAndRange(currentN);
+clearCanvas();
+updateDecompositions(currentN);
+</script>
+
+</body>
+</html>
