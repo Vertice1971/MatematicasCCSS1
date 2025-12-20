@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dominios de Funciones - Fichas</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:Segoe UI,Tahoma,Verdana,sans-serif;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
+    padding:20px;
+    color:#333
+}
+.container{max-width:1100px;margin:auto}
+h1{text-align:center;color:white;margin-bottom:25px}
+
+.instrucciones,.fichas-contenedor,.tabla-contenedor{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 8px 16px rgba(0,0,0,.2)
+}
+
+.fichas-area{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    min-height:80px
+}
+
+.ficha{
+    background:linear-gradient(135deg,#84fab0,#8fd3f4);
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    user-select:none;
+    box-shadow:0 4px 8px rgba(0,0,0,.2)
+}
+.ficha.selected{background:#f5576c;color:white}
+
+.fila-ejercicio{
+    margin-bottom:25px;
+    padding:15px;
+    background:#f9f9f9;
+    border-radius:10px;
+    border:3px solid #667eea
+}
+
+.tipo-funcion{
+    text-align:center;
+    font-weight:700;
+    margin-bottom:15px;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+    padding:8px;
+    border-radius:8px
+}
+
+.columnas{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px
+}
+
+.columna{text-align:center}
+
+.columna-titulo{
+    font-weight:600;
+    color:#667eea;
+    margin-bottom:8px
+}
+
+.dropzone{
+    min-height:60px;
+    background:white;
+    border:3px dashed #ccc;
+    border-radius:10px;
+    padding:10px;
+    cursor:pointer
+}
+.dropzone.active{border-color:#2196f3;background:#e3f2fd}
+.dropzone.filled{background:#e8f5e9;border-color:#4caf50;border-style:solid}
+.dropzone.incorrect{background:#ffebee;border-color:#f44336}
+
+.botones{
+    display:flex;
+    gap:15px;
+    justify-content:center
+}
+button{
+    padding:14px 30px;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer
+}
+.verificar{background:#f5576c;color:white}
+.reiniciar{background:#4facfe;color:white}
+
+.resultado{
+    margin-top:15px;
+    text-align:center;
+    font-weight:700;
+    display:none
+}
+.resultado.ok{color:#2e7d32}
+.resultado.error{color:#c62828}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>Dominios de funciones</h1>
+<h2>tomcue@iesjuandelacierva.com</h2>
+
+<div class="instrucciones">
+Selecciona una columna tocando una casilla. Solo aparecen las fichas de esa columna. Completa todas las filas.
+</div>
+
+<div class="fichas-contenedor">
+<div class="fichas-area" id="banco"></div>
+</div>
+
+<div class="tabla-contenedor" id="tabla"></div>
+
+<div class="botones">
+<button class="verificar" onclick="verificar()">Verificar</button>
+<button class="reiniciar" onclick="iniciar()">Reiniciar</button>
+</div>
+
+<div class="resultado" id="resultado"></div>
+</div>
+
+<script>
+const datos=[
+{tipo:"Polinómica",ejemplo:"f(x)=x³−2x+1",regla:"No hay restricciones",mirar:"Nada especial",dominio:"ℝ"},
+{tipo:"Racional",ejemplo:"f(x)=x/(x−3)",regla:"El denominador no puede valer 0",mirar:"Denominador ≠ 0",dominio:"ℝ − {3}"},
+{tipo:"Radical (raíz impar)",ejemplo:"∛(x−2)",regla:"No hay restricciones",mirar:"Índice impar",dominio:"ℝ"},
+{tipo:"Radical (raíz par)",ejemplo:"√(x−5)",regla:"Radicando ≥ 0",mirar:"Interior de la raíz",dominio:"[5,+∞)"},
+{tipo:"Exponencial",ejemplo:"2^(x−1)",regla:"Depende del exponente",mirar:"Dominio del exponente",dominio:"ℝ"},
+{tipo:"Logarítmica",ejemplo:"log(x−4)",regla:"Interior > 0",mirar:"Argumento del logaritmo",dominio:"(4,+∞)"}
+];
+
+const columnas=[
+{key:"ejemplo",titulo:"Ejemplo"},
+{key:"regla",titulo:"Regla"},
+{key:"mirar",titulo:"Qué mirar"},
+{key:"dominio",titulo:"Dominio"}
+];
+
+let columnaActiva=null;
+let fichaSel=null;
+let resp={};
+
+function iniciar(){
+resp={};
+columnaActiva=null;
+fichaSel=null;
+document.getElementById("resultado").style.display="none";
+document.getElementById("banco").innerHTML="";
+crearTabla();
+}
+
+function crearTabla(){
+const t=document.getElementById("tabla");
+t.innerHTML="";
+datos.forEach((f,i)=>{
+const fila=document.createElement("div");
+fila.className="fila-ejercicio";
+fila.innerHTML=`<div class="tipo-funcion">${f.tipo}</div>
+<div class="columnas">
+${columnas.map(c=>`
+<div class="columna">
+<div class="columna-titulo">${c.titulo}</div>
+<div class="dropzone" data-fila="${i}" data-col="${c.key}"></div>
+</div>`).join("")}
+</div>`;
+t.appendChild(fila);
+});
+}
+
+function activarColumna(col){
+columnaActiva=col;
+document.querySelectorAll(".dropzone").forEach(d=>{
+d.classList.toggle("active",d.dataset.col===col);
+});
+cargarFichas();
+}
+
+function cargarFichas(){
+const b=document.getElementById("banco");
+b.innerHTML="";
+datos
+.map((d,i)=>({texto:d[columnaActiva],fila:i}))
+.sort(()=>Math.random()-.5)
+.forEach(o=>{
+const f=document.createElement("div");
+f.className="ficha";
+f.textContent=o.texto;
+f.dataset.fila=o.fila;
+f.onclick=()=>seleccionarFicha(f);
+b.appendChild(f);
+});
+}
+
+function seleccionarFicha(f){
+document.querySelectorAll(".ficha").forEach(x=>x.classList.remove("selected"));
+f.classList.add("selected");
+fichaSel=f;
+}
+
+document.addEventListener("click",e=>{
+if(e.target.classList.contains("dropzone")){
+const dz=e.target;
+activarColumna(dz.dataset.col);
+
+if(fichaSel){
+if(dz.dataset.col!==columnaActiva)return;
+
+const k=dz.dataset.fila+"-"+dz.dataset.col;
+
+if(resp[k])liberar(resp[k]);
+
+dz.textContent=fichaSel.textContent;
+dz.classList.remove("incorrect");
+dz.classList.add("filled");
+resp[k]={ fila: Number(fichaSel.dataset.fila), texto: fichaSel.textContent };
+fichaSel.remove();
+fichaSel=null;
+}
+}
+});
+
+function liberar(o){
+if(!o)return;
+const f=document.createElement("div");
+f.className="ficha";
+f.textContent=o.texto;
+f.dataset.fila=o.fila;
+f.onclick=()=>seleccionarFicha(f);
+document.getElementById("banco").appendChild(f);
+}
+
+function verificar(){
+let ok=true;
+document.querySelectorAll(".dropzone").forEach(d=>{
+const k=d.dataset.fila+"-"+d.dataset.col;
+if(!resp[k] || resp[k].fila !== Number(d.dataset.fila)){
+d.classList.add("incorrect");
+ok=false;
+}else{
+d.classList.remove("incorrect");
+}
+});
+const r=document.getElementById("resultado");
+r.textContent=ok?"Todo correcto":"Hay errores";
+r.className="resultado "+(ok?"ok":"error");
+r.style.display="block";
+}
+
+iniciar();
+</script>
+</body>
+</html>
