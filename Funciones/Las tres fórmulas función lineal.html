@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica de Fórmulas Lineales</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .formula {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2980b9;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .option {
+            padding: 12px;
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option .option-text {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .option .option-formula {
+            font-size: 0.9em;
+            color: #2980b9;
+            font-style: italic;
+        }
+        .option:hover {
+            background-color: #e8f4f8;
+            border-color: #3498db;
+        }
+        .option.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        .option.correct {
+            background-color: #27ae60;
+            color: white;
+            border-color: #229954;
+        }
+        .option.incorrect {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .solution {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 5px;
+        }
+        .solution h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .hidden {
+            display: none;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Práctica de Fórmulas Lineales</h1>
+        
+        <div class="score">
+            Puntuación: <span id="score">0</span> / <span id="total">0</span>
+        </div>
+
+        <div id="part1" class="section">
+            <h2>Parte 1: Identifica la fórmula</h2>
+            <p>¿Qué hace esta fórmula?</p>
+            <div class="formula" id="formula1"></div>
+            <div class="options" id="options1"></div>
+            <button id="checkBtn1" onclick="checkAnswer(1)">Verificar</button>
+            <div id="feedback1" class="feedback hidden"></div>
+        </div>
+
+        <div id="part2" class="section hidden">
+            <h2>Parte 2: Identifica la fórmula</h2>
+            <p>¿Qué hace esta fórmula?</p>
+            <div class="formula" id="formula2"></div>
+            <div class="options" id="options2"></div>
+            <button id="checkBtn2" onclick="checkAnswer(2)">Verificar</button>
+            <div id="feedback2" class="feedback hidden"></div>
+        </div>
+
+        <div id="part3" class="section hidden">
+            <h2>Parte 3: Identifica la fórmula</h2>
+            <p>¿Qué hace esta fórmula?</p>
+            <div class="formula" id="formula3"></div>
+            <div class="options" id="options3"></div>
+            <button id="checkBtn3" onclick="checkAnswer(3)">Verificar</button>
+            <div id="feedback3" class="feedback hidden"></div>
+        </div>
+
+        <div id="part4" class="section hidden">
+            <h2>Parte 4: Ejercicio práctico</h2>
+            <p id="exercise1"></p>
+            <div class="options" id="options4"></div>
+            <button id="checkBtn4" onclick="checkExercise(1)">Verificar</button>
+            <div id="feedback4" class="feedback hidden"></div>
+            <div id="solution1" class="solution hidden"></div>
+        </div>
+
+        <div id="part5" class="section hidden">
+            <h2>Parte 5: Ejercicio práctico</h2>
+            <p id="exercise2"></p>
+            <div class="options" id="options5"></div>
+            <button id="checkBtn5" onclick="checkExercise(2)">Verificar</button>
+            <div id="feedback5" class="feedback hidden"></div>
+            <div id="solution2" class="solution hidden"></div>
+        </div>
+
+        <div id="part6" class="section hidden">
+            <h2>Parte 6: Ejercicio práctico</h2>
+            <p id="exercise3"></p>
+            <div class="options" id="options6"></div>
+            <button id="checkBtn6" onclick="checkExercise(3)">Verificar</button>
+            <div id="feedback6" class="feedback hidden"></div>
+            <div id="solution3" class="solution hidden"></div>
+        </div>
+
+        <button id="restartBtn" class="hidden" onclick="restart()">Reiniciar práctica</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let total = 0;
+        let selectedFormulas = [];
+        let selectedExercises = [];
+
+        const formulas = [
+            {
+                formula: "m = (y₂ - y₁) / (x₂ - x₁)",
+                name: "Calcular la pendiente con dos puntos",
+                options: [
+                    "Calcular la pendiente conociendo dos puntos",
+                    "Encontrar la ecuación de la recta con un punto y pendiente",
+                    "Interpolar o extrapolar valores entre dos puntos"
+                ],
+                correct: 0
+            },
+            {
+                formula: "y - y₁ = m(x - x₁)",
+                name: "Punto-pendiente",
+                options: [
+                    "Calcular la pendiente conociendo dos puntos",
+                    "Encontrar la ecuación de la recta con un punto y pendiente",
+                    "Interpolar o extrapolar valores entre dos puntos"
+                ],
+                correct: 1
+            },
+            {
+                formula: "(y - y₁) / (y₂ - y₁) = (x - x₁) / (x₂ - x₁)",
+                name: "Interpolar/extrapolar",
+                options: [
+                    "Calcular la pendiente conociendo dos puntos",
+                    "Encontrar la ecuación de la recta con un punto y pendiente",
+                    "Interpolar o extrapolar valores entre dos puntos"
+                ],
+                correct: 2
+            }
+        ];
+
+        const exercises = {
+            pendiente: [
+                {
+                    text: "Una recta pasa por los puntos A(2, 5) y B(6, 13). ¿Qué fórmula necesitas para encontrar la pendiente?",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> m = (y₂ - y₁) / (x₂ - x₁)</p><p><strong>Datos:</strong> (x₁, y₁) = (2, 5) y (x₂, y₂) = (6, 13)</p><p><strong>Cálculo:</strong><br>m = (13 - 5) / (6 - 2)<br>m = 8 / 4<br>m = 2</p><p><strong>Respuesta:</strong> La pendiente es m = 2</p>",
+                    correct: 0
+                },
+                {
+                    text: "Calcula la pendiente de la recta que pasa por los puntos C(-1, 3) y D(4, -2).",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> m = (y₂ - y₁) / (x₂ - x₁)</p><p><strong>Datos:</strong> (x₁, y₁) = (-1, 3) y (x₂, y₂) = (4, -2)</p><p><strong>Cálculo:</strong><br>m = (-2 - 3) / (4 - (-1))<br>m = -5 / 5<br>m = -1</p><p><strong>Respuesta:</strong> La pendiente es m = -1</p>",
+                    correct: 0
+                },
+                {
+                    text: "Encuentra la pendiente de una recta que conecta los puntos P(0, 4) y Q(5, 14).",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> m = (y₂ - y₁) / (x₂ - x₁)</p><p><strong>Datos:</strong> (x₁, y₁) = (0, 4) y (x₂, y₂) = (5, 14)</p><p><strong>Cálculo:</strong><br>m = (14 - 4) / (5 - 0)<br>m = 10 / 5<br>m = 2</p><p><strong>Respuesta:</strong> La pendiente es m = 2</p>",
+                    correct: 0
+                }
+            ],
+            puntoPendiente: [
+                {
+                    text: "Una recta tiene pendiente m = 3 y pasa por el punto (1, 4). ¿Qué fórmula usas para escribir su ecuación?",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> y - y₁ = m(x - x₁)</p><p><strong>Datos:</strong> m = 3, (x₁, y₁) = (1, 4)</p><p><strong>Sustitución:</strong><br>y - 4 = 3(x - 1)<br>y - 4 = 3x - 3<br>y = 3x + 1</p><p><strong>Respuesta:</strong> La ecuación es y = 3x + 1</p>",
+                    correct: 1
+                },
+                {
+                    text: "Escribe la ecuación de la recta con pendiente m = -2 que pasa por el punto (3, 5).",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> y - y₁ = m(x - x₁)</p><p><strong>Datos:</strong> m = -2, (x₁, y₁) = (3, 5)</p><p><strong>Sustitución:</strong><br>y - 5 = -2(x - 3)<br>y - 5 = -2x + 6<br>y = -2x + 11</p><p><strong>Respuesta:</strong> La ecuación es y = -2x + 11</p>",
+                    correct: 1
+                },
+                {
+                    text: "Encuentra la ecuación de una recta con pendiente m = 0.5 que cruza por el punto (-2, 1).",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> y - y₁ = m(x - x₁)</p><p><strong>Datos:</strong> m = 0.5, (x₁, y₁) = (-2, 1)</p><p><strong>Sustitución:</strong><br>y - 1 = 0.5(x - (-2))<br>y - 1 = 0.5(x + 2)<br>y - 1 = 0.5x + 1<br>y = 0.5x + 2</p><p><strong>Respuesta:</strong> La ecuación es y = 0.5x + 2</p>",
+                    correct: 1
+                }
+            ],
+            interpolar: [
+                {
+                    text: "Una temperatura sube linealmente de 10°C a las 8:00 hasta 30°C a las 12:00. ¿Qué fórmula usas para calcular la temperatura a las 10:00?",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> (y - y₁) / (y₂ - y₁) = (x - x₁) / (x₂ - x₁)</p><p><strong>Datos:</strong> (x₁, y₁) = (8, 10), (x₂, y₂) = (12, 30), x = 10</p><p><strong>Sustitución:</strong><br>(y - 10) / (30 - 10) = (10 - 8) / (12 - 8)<br>(y - 10) / 20 = 2 / 4<br>(y - 10) / 20 = 0.5<br>y - 10 = 10<br>y = 20</p><p><strong>Respuesta:</strong> A las 10:00 la temperatura es 20°C</p>",
+                    correct: 2
+                },
+                {
+                    text: "El precio de un producto era $50 en enero y $80 en mayo. ¿Qué fórmula usas para estimar el precio en marzo?",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> (y - y₁) / (y₂ - y₁) = (x - x₁) / (x₂ - x₁)</p><p><strong>Datos:</strong> (x₁, y₁) = (1, 50), (x₂, y₂) = (5, 80), x = 3</p><p><strong>Sustitución:</strong><br>(y - 50) / (80 - 50) = (3 - 1) / (5 - 1)<br>(y - 50) / 30 = 2 / 4<br>(y - 50) / 30 = 0.5<br>y - 50 = 15<br>y = 65</p><p><strong>Respuesta:</strong> En marzo el precio estimado es $65</p>",
+                    correct: 2
+                },
+                {
+                    text: "Un auto viaja linealmente desde el km 100 a las 14:00 hasta el km 250 a las 17:00. ¿Qué fórmula necesitas para saber en qué kilómetro estaba a las 15:30?",
+                    solution: "<h3>Solución:</h3><p><strong>Fórmula:</strong> (y - y₁) / (y₂ - y₁) = (x - x₁) / (x₂ - x₁)</p><p><strong>Datos:</strong> (x₁, y₁) = (14, 100), (x₂, y₂) = (17, 250), x = 15.5</p><p><strong>Sustitución:</strong><br>(y - 100) / (250 - 100) = (15.5 - 14) / (17 - 14)<br>(y - 100) / 150 = 1.5 / 3<br>(y - 100) / 150 = 0.5<br>y - 100 = 75<br>y = 175</p><p><strong>Respuesta:</strong> A las 15:30 estaba en el km 175</p>",
+                    correct: 2
+                }
+            ]
+        };
+
+        const formulaOptions = [
+            {text: "Calcular la pendiente con dos puntos", formula: "m = (y₂ - y₁) / (x₂ - x₁)"},
+            {text: "Encontrar la ecuación con un punto y pendiente", formula: "y - y₁ = m(x - x₁)"},
+            {text: "Interpolar o extrapolar valores entre dos puntos", formula: "(y - y₁) / (y₂ - y₁) = (x - x₁) / (x₂ - x₁)"}
+        ];
+
+        function shuffle(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function init() {
+            selectedFormulas = shuffle([...formulas]);
+            
+            const ex1 = exercises.pendiente[Math.floor(Math.random() * 3)];
+            const ex2 = exercises.puntoPendiente[Math.floor(Math.random() * 3)];
+            const ex3 = exercises.interpolar[Math.floor(Math.random() * 3)];
+            selectedExercises = shuffle([ex1, ex2, ex3]);
+            
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById('formula' + i).textContent = selectedFormulas[i-1].formula;
+                createOptions('options' + i, selectedFormulas[i-1].options, i);
+            }
+            
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById('exercise' + i).textContent = selectedExercises[i-1].text;
+                createOptions('options' + (i+3), formulaOptions, i+3);
+            }
+        }
+
+        function createOptions(containerId, options, partNum) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                
+                // Si es un objeto con texto y fórmula (ejercicios prácticos)
+                if (typeof opt === 'object') {
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'option-text';
+                    textDiv.textContent = opt.text;
+                    
+                    const formulaDiv = document.createElement('div');
+                    formulaDiv.className = 'option-formula';
+                    formulaDiv.textContent = opt.formula;
+                    
+                    div.appendChild(textDiv);
+                    div.appendChild(formulaDiv);
+                } else {
+                    // Si es solo texto (identificación de fórmulas)
+                    div.textContent = opt;
+                }
+                
+                div.onclick = () => selectOption(partNum, idx);
+                div.dataset.index = idx;
+                container.appendChild(div);
+            });
+        }
+
+        function selectOption(partNum, index) {
+            const container = document.getElementById('options' + partNum);
+            const options = container.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+        }
+
+        function checkAnswer(partNum) {
+            const container = document.getElementById('options' + partNum);
+            const selected = container.querySelector('.option.selected');
+            
+            if (!selected) {
+                alert('Por favor selecciona una opción');
+                return;
+            }
+            
+            const selectedIndex = parseInt(selected.dataset.index);
+            const correct = selectedFormulas[partNum-1].correct;
+            const feedback = document.getElementById('feedback' + partNum);
+            const btn = document.getElementById('checkBtn' + partNum);
+            
+            total++;
+            
+            if (selectedIndex === correct) {
+                score++;
+                selected.classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = '¡Correcto! Esta fórmula se usa para ' + selectedFormulas[partNum-1].options[correct].toLowerCase() + '.';
+            } else {
+                selected.classList.add('incorrect');
+                const correctOption = container.querySelectorAll('.option')[correct];
+                correctOption.classList.add('correct');
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = 'Incorrecto. La respuesta correcta es: ' + selectedFormulas[partNum-1].options[correct];
+            }
+            
+            feedback.classList.remove('hidden');
+            btn.disabled = true;
+            updateScore();
+            
+            setTimeout(() => {
+                document.getElementById('part' + (partNum + 1)).classList.remove('hidden');
+                document.getElementById('part' + (partNum + 1)).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 2000);
+        }
+
+        function checkExercise(exerciseNum) {
+            const partNum = exerciseNum + 3;
+            const container = document.getElementById('options' + partNum);
+            const selected = container.querySelector('.option.selected');
+            
+            if (!selected) {
+                alert('Por favor selecciona una opción');
+                return;
+            }
+            
+            const selectedIndex = parseInt(selected.dataset.index);
+            const correct = selectedExercises[exerciseNum-1].correct;
+            const feedback = document.getElementById('feedback' + partNum);
+            const solution = document.getElementById('solution' + exerciseNum);
+            const btn = document.getElementById('checkBtn' + partNum);
+            
+            total++;
+            
+            if (selectedIndex === correct) {
+                score++;
+                selected.classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = '¡Correcto! Esta es la fórmula adecuada para este problema.';
+            } else {
+                selected.classList.add('incorrect');
+                const correctOption = container.querySelectorAll('.option')[correct];
+                correctOption.classList.add('correct');
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = 'Incorrecto. La fórmula correcta es: ' + formulaOptions[correct].text;
+            }
+            
+            feedback.classList.remove('hidden');
+            solution.innerHTML = selectedExercises[exerciseNum-1].solution;
+            solution.classList.remove('hidden');
+            btn.disabled = true;
+            updateScore();
+            
+            if (exerciseNum < 3) {
+                setTimeout(() => {
+                    document.getElementById('part' + (partNum + 1)).classList.remove('hidden');
+                    document.getElementById('part' + (partNum + 1)).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 3000);
+            } else {
+                setTimeout(() => {
+                    document.getElementById('restartBtn').classList.remove('hidden');
+                }, 2000);
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('total').textContent = total;
+        }
+
+        function restart() {
+            score = 0;
+            total = 0;
+            updateScore();
+            
+            for (let i = 2; i <= 6; i++) {
+                document.getElementById('part' + i).classList.add('hidden');
+            }
+            
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById('feedback' + i).classList.add('hidden');
+                document.getElementById('checkBtn' + i).disabled = false;
+            }
+            
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById('solution' + i).classList.add('hidden');
+            }
+            
+            document.getElementById('restartBtn').classList.add('hidden');
+            
+            init();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        init();
+    </script>
+</body>
+</html>
